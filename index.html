@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>University Portal</title>
+<title>Kuwait University Portal</title>
 <style>
 :root{
-  --navy-dark:#0B1730;
-  --navy:#152852;
-  --navy-mid:#1D3A72;
-  --gold:#F7C600;
-  --gold-deep:#E0AE00;
-  --sky:#1E9BD7;
-  --sky-deep:#0F7FB8;
+  --navy-dark:#050505;
+  --navy:#141414;
+  --navy-mid:#232323;
+  --gold:#F9F40B;
+  --gold-deep:#C9BE00;
+  --sky:#00AEF0;
+  --sky-deep:#0089BF;
   --paper:#FFFFFF;
-  --card:#F3F5F8;
-  --card-line:#E2E6EC;
-  --muted:#5B6472;
-  --ink:#101828;
+  --card:#F3F3F3;
+  --card-line:#E3E3E3;
+  --muted:#5C5C5C;
+  --ink:#0A0A0A;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -39,7 +39,7 @@ header.topbar{
   border-bottom:1px solid #EEF0F3;
 }
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
-.crest{width:38px;height:38px;flex-shrink:0;transition:transform .3s ease;}
+.crest{height:44px;width:auto;flex-shrink:0;display:block;transition:transform .3s ease;}
 .brand:hover .crest{transform:rotate(-6deg) scale(1.08);}
 .brand-text{display:flex;flex-direction:column;line-height:1.15;}
 .brand-text .name{font-family:Georgia, serif;font-weight:700;font-size:20px;letter-spacing:0.2px;color:var(--navy-dark);}
@@ -198,12 +198,9 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
 
 <header class="topbar">
   <a class="brand" href="index.html">
-    <svg class="crest" viewBox="0 0 40 40" fill="none">
-      <path d="M20 3 L36 11 L20 19 L4 11 Z" fill="#F7C600"/>
-      <path d="M10 15.5 V25 C10 29 14.5 32.5 20 32.5 C25.5 32.5 30 29 30 25 V15.5 L20 20.5 Z" fill="#1E9BD7"/>
-    </svg>
+    <img class="crest" src="logo-crest.png" alt="Kuwait University crest">
     <div class="brand-text">
-      <span class="name">University</span>
+      <span class="name">Kuwait University</span>
       <span class="tag">Student Portal</span>
     </div>
   </a>
@@ -251,7 +248,7 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
       <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.5"/></svg>
       <span class="t">Activity</span>
     </a>
-    <a class="qlink-ext" href="https://moodle.org" target="_blank" rel="noopener">
+    <a class="qlink-ext" href="learning-hub.html" target="_blank" rel="noopener">
       <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.5"/></svg>
       <span class="t">Learning Hub</span>
       <span class="ext">&#8599;</span>
@@ -340,7 +337,7 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
 </main>
 
 <footer>
-  <p>University Student Portal &mdash; demo layout</p>
+  <p>Kuwait University Student Portal &mdash; demo layout</p>
 </footer>
 
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile</title>
+<title>Make a Payment</title>
 <style>
 
 :root{
@@ -364,7 +364,7 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
   <div class="inner">
     <div>
       <p class="eyebrow">Student Portal</p>
-      <h1>Your profile</h1>
+      <h1>Make a payment</h1>
     </div>
   </div>
 </section>
@@ -372,7 +372,8 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
   <ol>
     <li><a href="index.html">Home</a></li>
     <li><a href="student-portal.html">Student Portal</a></li>
-    <li>Profile</li>
+    <li><a href="financial-info.html">Financial Info</a></li>
+    <li>Make Payment</li>
   </ol>
 </nav>
 <main>
@@ -398,7 +399,7 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
   </ul>
   <h2>Financial</h2>
   <ul>
-      <li><a href="financial-info.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v9M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.8 2.5 2-1.1 1.7-2.5 1.7-2.5.7-2.5 2 1.1 2 2.5 2 2.5-.8 2.5-2" stroke="currentColor" stroke-width="1.3"/></svg><span>Financial Info</span></a></li>
+      <li><a class="active" href="financial-info.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v9M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.8 2.5 2-1.1 1.7-2.5 1.7-2.5.7-2.5 2 1.1 2 2.5 2 2.5-.8 2.5-2" stroke="currentColor" stroke-width="1.3"/></svg><span>Financial Info</span></a></li>
   </ul>
   <h2>Personal & Campus</h2>
   <ul>
@@ -414,28 +415,74 @@ footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12p
   </ul>
 </aside>
     <div class="content">
+      <div class="amount-card">
+        <div>
+          <div class="l">Amount due</div>
+          <div class="v">KD 2,850.000</div>
+          <div class="due">Due 30 September 2026</div>
+        </div>
+        <span class="pill due">Outstanding</span>
+      </div>
+
       <article class="panel">
-        <div class="profile-head">
-          <div class="avatar-lg">NR</div>
-          <div>
-            <h3>Nadia binti Rahman</h3>
-            <div class="sub">nadia.rahman &middot; A21EC0142 &middot; B.Sc. Computer Science</div>
-            <div class="badge-row"><span class="pill ok">Active student</span><span class="pill progress">Year 3, Semester 5</span></div>
-          </div>
+        <h2>What you're paying</h2>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>Item</th><th>Amount</th></tr></thead>
+            <tbody>
+              <tr><td>Tuition fee &mdash; Semester 5</td><td>KD 5,800.000</td></tr>
+              <tr><td>Library &amp; facilities fee</td><td>KD 350.000</td></tr>
+              <tr><td>Merit scholarship credit</td><td>&ndash; KD 3,300.000</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td style="font-weight:800;">Total due</td><td style="font-weight:800;">KD 2,850.000</td></tr>
+            </tfoot>
+          </table>
         </div>
       </article>
 
       <article class="panel">
-        <h2>Account details</h2>
+        <h2>Select payment method</h2>
         <div class="panel-body">
-          <div class="field-grid">
-            <div class="field"><div class="l">Username</div><div class="v">nadia.rahman</div></div>
-            <div class="field"><div class="l">Email</div><div class="v">nadia.rahman@university.edu</div></div>
-            <div class="field"><div class="l">Account status</div><div class="v">Active</div></div>
-            <div class="field"><div class="l">Last login</div><div class="v">13 Sep 2026, 9:42 AM</div></div>
-            <div class="field"><div class="l">Two-factor authentication</div><div class="v">Enabled</div></div>
-            <div class="field"><div class="l">Enrolled since</div><div class="v">September 2023</div></div>
+          <div class="method-grid">
+            <label class="method-card">
+              <input type="radio" name="method" checked>
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.6"/></svg>
+              <span>KNET</span>
+            </label>
+            <label class="method-card">
+              <input type="radio" name="method">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 9.5h18" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 14.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <span>Credit / Debit Card</span>
+            </label>
+            <label class="method-card">
+              <input type="radio" name="method">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 10h16M4 10l3.5-5h9L20 10M4 10v9h16v-9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 14v3M15 14v3" stroke="currentColor" stroke-width="1.6"/></svg>
+              <span>Online Banking</span>
+            </label>
           </div>
+
+          <div class="pay-field-grid">
+            <div class="pay-field">
+              <label>Cardholder / account name</label>
+              <input type="text" placeholder="Nadia binti Rahman">
+            </div>
+            <div class="pay-field">
+              <label>Card / account number</label>
+              <input type="text" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;">
+            </div>
+            <div class="pay-field">
+              <label>Expiry date</label>
+              <input type="text" placeholder="MM / YY">
+            </div>
+            <div class="pay-field">
+              <label>CVV</label>
+              <input type="text" placeholder="&bull;&bull;&bull;">
+            </div>
+          </div>
+
+          <button class="btn btn-primary pay-cta">Pay KD 2,850.000 now</button>
+          <p style="font-size:12px;color:var(--muted);margin:12px 0 0;text-align:center;">This is a demo screen &mdash; no real payment will be processed.</p>
         </div>
       </article>
     </div>
