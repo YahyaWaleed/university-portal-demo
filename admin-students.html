@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Records</title>
+<style>
+
+:root{
+  --navy-dark:#050505;
+  --navy:#141414;
+  --navy-mid:#232323;
+  --gold:#F9F40B;
+  --gold-deep:#C9BE00;
+  --sky:#00AEF0;
+  --sky-deep:#0089BF;
+  --paper:#FFFFFF;
+  --card:#F3F3F3;
+  --card-line:#E3E3E3;
+  --muted:#5C5C5C;
+  --ink:#0A0A0A;
+  --good:#1E8E5A;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size:15px;
+  line-height:1.5;
+}
+h1,h2,h3{font-family:Georgia, 'Times New Roman', serif;}
+a{color:inherit;}
+
+/* ---------- Header ---------- */
+header.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 40px;
+  background:var(--paper);
+  border-bottom:1px solid #EEF0F3;
+}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.crest{height:44px;width:auto;flex-shrink:0;display:block;transition:transform .3s ease;}
+.brand:hover .crest{transform:rotate(-6deg) scale(1.08);}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;}
+.brand-text .name{font-family:Georgia, serif;font-weight:700;font-size:20px;letter-spacing:0.2px;color:var(--navy-dark);}
+.brand-text .tag{font-size:11.5px;color:var(--muted);letter-spacing:0.3px;}
+.who{display:flex;align-items:center;gap:14px;}
+.who .meta{text-align:right;line-height:1.25;}
+.who .meta .n{font-weight:700;font-size:14px;}
+.who .meta .r{font-size:12.5px;color:var(--muted);}
+a.avatar-link{text-decoration:none;}
+.avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(145deg, var(--sky), var(--sky-deep));
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Georgia, serif;font-size:14px;font-weight:700;
+  box-shadow:0 6px 14px -4px rgba(15,127,184,0.55), inset 0 1px 1px rgba(255,255,255,0.4);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+a.avatar-link:hover .avatar{transform:translateY(-3px) scale(1.06);box-shadow:0 12px 20px -6px rgba(15,127,184,0.6);}
+a.logout-link{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:50%;
+  color:var(--muted);text-decoration:none;
+  border:1px solid var(--card-line);
+  transition:color .18s ease, border-color .18s ease, background .18s ease, transform .18s ease;
+}
+a.logout-link svg{width:17px;height:17px;}
+a.logout-link:hover{color:#B3261E;border-color:#F3C6C2;background:#FDECEA;transform:translateY(-2px);}
+
+/* ---------- Notification bell + dropdown ---------- */
+.notif-wrap{position:relative;}
+.notif-trigger{
+  list-style:none;cursor:pointer;position:relative;
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);
+  transition:background .2s ease, color .2s ease, transform .2s ease;
+}
+.notif-trigger::-webkit-details-marker{display:none;}
+.notif-trigger:hover{background:var(--card);color:var(--ink);transform:translateY(-2px);}
+.notif-trigger svg{width:19px;height:19px;}
+.notif-badge{
+  position:absolute;top:3px;right:3px;background:var(--sky);color:#fff;font-size:9.5px;font-weight:700;
+  width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 2px var(--paper);
+}
+.notif-panel{
+  position:absolute;top:46px;right:0;width:320px;
+  background:var(--paper);border:1px solid var(--card-line);border-radius:12px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);overflow:hidden;z-index:30;
+}
+.notif-panel-head{padding:14px 18px;font-weight:700;font-size:13.5px;border-bottom:1px solid var(--card-line);}
+.notif-list{list-style:none;margin:0;padding:0;max-height:340px;overflow-y:auto;}
+.notif-list li a{
+  display:flex;gap:12px;padding:13px 18px;text-decoration:none;color:var(--ink);
+  border-bottom:1px solid var(--card-line);transition:background .15s ease;
+}
+.notif-list li:last-child a{border-bottom:none;}
+.notif-list li a:hover{background:var(--card);}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--sky);flex-shrink:0;margin-top:6px;}
+.notif-dot.read{background:var(--card-line);}
+.notif-text{flex:1;}
+.notif-text .t{font-size:13px;font-weight:600;line-height:1.4;}
+.notif-text .m{font-size:11.5px;color:var(--muted);margin-top:2px;}
+
+/* ---------- Hero band (navy) ---------- */
+section.hero{
+  position:relative;
+  background:linear-gradient(120deg, var(--navy-dark) 0%, var(--navy) 55%, var(--navy-mid) 100%);
+  padding:40px 40px 34px;
+  overflow:hidden;
+}
+section.hero::before{
+  content:"";position:absolute;top:-40%;right:-10%;width:520px;height:520px;
+  background:radial-gradient(circle, rgba(30,155,215,0.35), transparent 65%);
+  pointer-events:none;
+}
+section.hero .inner{
+  max-width:1280px;margin:0 auto;
+  display:flex;align-items:center;gap:18px;
+  border-left:5px solid var(--sky);
+  padding-left:22px;
+  position:relative;z-index:1;
+}
+section.hero .eyebrow{font-size:12.5px;color:#9FC3E8;letter-spacing:0.4px;margin-bottom:6px;}
+section.hero h1{font-size:30px;font-weight:800;margin:0;color:#fff;letter-spacing:0.2px;}
+
+/* ---------- Breadcrumb strip (gold) ---------- */
+nav.crumb{
+  background:linear-gradient(180deg, var(--gold), var(--gold-deep));
+  padding:12px 40px;
+}
+nav.crumb ol{
+  max-width:1280px;margin:0 auto;display:flex;gap:8px;align-items:center;
+  list-style:none;padding:0;font-size:13.5px;font-weight:700;color:var(--navy-dark);
+}
+nav.crumb li + li::before{content:"/";margin-right:8px;color:rgba(11,23,48,0.5);}
+nav.crumb a{text-decoration:none;color:var(--navy-dark);}
+nav.crumb a:hover{text-decoration:underline;}
+
+/* ---------- Layout: sidebar + content ---------- */
+main{max-width:1280px;margin:0 auto;padding:32px 40px 60px;}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;align-items:start;}
+@media (max-width:900px){ .layout{grid-template-columns:1fr;} }
+
+aside.sidebar{
+  background:var(--paper);
+  border:1px solid var(--card-line);
+  border-radius:10px;
+  padding:14px;
+  position:sticky;top:24px;
+  box-shadow:0 2px 8px rgba(16,24,40,0.06);
+}
+aside.sidebar h2{
+  font-family:'Segoe UI', sans-serif;
+  font-size:11px;text-transform:uppercase;letter-spacing:0.6px;
+  color:var(--muted);margin:18px 10px 8px;font-weight:700;
+}
+aside.sidebar h2:first-child{margin-top:6px;}
+aside.sidebar ul{list-style:none;margin:0;padding:0;}
+aside.sidebar li{margin-bottom:4px;}
+aside.sidebar a{
+  display:flex;align-items:center;gap:12px;
+  text-decoration:none;color:var(--ink);
+  padding:11px 12px;border-radius:7px;
+  font-size:14px;font-weight:600;
+  border-left:3px solid transparent;
+  transition:background .18s ease, border-color .18s ease, transform .18s ease, color .18s ease;
+}
+aside.sidebar .icon{width:18px;height:18px;flex-shrink:0;color:var(--sky-deep);transition:color .18s ease, transform .18s ease;}
+aside.sidebar a:hover{background:var(--card);border-left-color:var(--sky);transform:translateX(3px);}
+aside.sidebar a:hover .icon{transform:scale(1.15);}
+aside.sidebar a.active{background:var(--navy-dark);color:#fff;border-left-color:var(--gold);box-shadow:0 6px 14px -6px rgba(11,23,48,0.5);}
+aside.sidebar a.active .icon{color:var(--gold);}
+aside.sidebar a.ext{color:var(--ink);}
+aside.sidebar a.ext:hover{background:var(--gold-soft, #FFF2CE);border-left-color:var(--gold-deep);}
+aside.sidebar a.ext:hover .icon{color:var(--gold-deep);}
+aside.sidebar a.ext .icon{color:var(--gold-deep);}
+aside.sidebar .ext-mark{margin-left:auto;font-size:11px;color:var(--muted);}
+aside.sidebar hr{border:none;border-top:1px solid var(--card-line);margin:10px 6px;}
+
+.content{min-width:0;}
+
+/* ---------- Stat row (compact top-of-page figures) ---------- */
+.stat-row{display:flex;gap:28px;margin-bottom:28px;flex-wrap:wrap;}
+.stat{border-left:3px solid var(--sky);padding:2px 0 2px 16px;}
+.stat .v{font-family:Georgia, serif;font-size:27px;font-weight:800;line-height:1;color:var(--navy-dark);}
+.stat .l{font-size:12px;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:0.2px;}
+
+/* ---------- KPI cards ---------- */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit, minmax(190px, 1fr));gap:18px;margin-bottom:28px;}
+.kpi{
+  position:relative;
+  background:var(--paper);border:1px solid var(--card-line);border-radius:10px;
+  padding:20px 20px 18px;overflow:hidden;
+  box-shadow:0 2px 8px rgba(16,24,40,0.06);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease;
+}
+.kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,var(--sky));}
+.kpi:hover{transform:translateY(-6px);box-shadow:0 20px 28px -12px rgba(16,24,40,0.25);}
+.kpi .l{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0.2px;}
+.kpi .v{font-family:Georgia, serif;font-size:30px;font-weight:800;margin-top:6px;color:var(--navy-dark);}
+.kpi .d{font-size:12px;margin-top:6px;font-weight:700;}
+.kpi .d.up{color:var(--good);}
+.kpi .d.flat{color:var(--muted);}
+
+/* ---------- Chart panel ---------- */
+.panel{
+  background:var(--card);border:1px solid var(--card-line);border-radius:10px;
+  box-shadow:0 2px 6px rgba(16,24,40,0.06);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease;
+  margin-bottom:28px;
+}
+.panel:hover{transform:translateY(-6px);box-shadow:0 22px 30px -14px rgba(16,24,40,0.22);}
+.panel > h2{font-size:17px;font-weight:800;margin:0;padding:18px 22px 14px;border-bottom:1px solid var(--card-line);color:var(--navy-dark);}
+.panel .panel-body{padding:18px 22px 22px;}
+
+.chart-wrap{width:100%;overflow-x:auto;}
+.chart-wrap svg{width:100%;height:auto;min-width:480px;}
+.pt circle{transition:transform .2s ease;transform-box:fill-box;transform-origin:center;}
+.pt:hover circle{transform:scale(1.6);}
+.pt text{opacity:0;transition:opacity .2s ease;font-size:12px;font-weight:700;fill:var(--navy-dark);}
+.pt:hover text{opacity:1;}
+.axis-label{font-size:11px;fill:var(--muted);}
+.grid-line{stroke:var(--card-line);stroke-width:1;}
+
+/* ---------- Two-up panel row (records/courses) ---------- */
+.panel-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media (max-width:760px){ .panel-row{grid-template-columns:1fr;} }
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{text-align:left;font-weight:700;color:var(--muted);font-size:12px;padding:0 0 8px;border-bottom:1px solid var(--card-line);}
+td{padding:11px 0;border-bottom:1px solid var(--card-line);}
+tr:last-child td{border-bottom:none;}
+.pill{font-size:11.5px;padding:3px 9px;border-radius:20px;display:inline-block;font-weight:700;}
+.pill.ok{background:#E3F3EA;color:var(--good);}
+.pill.due{background:#FDEFD8;color:#9C6B00;}
+.pill.progress{background:#E2E9F5;color:var(--navy-mid);}
+.pill.reject{background:#FBE4E2;color:#B3261E;}
+
+/* ---------- Field grid (key/value bio data) ---------- */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;}
+@media (max-width:640px){.field-grid{grid-template-columns:1fr;}}
+.field{padding:13px 0;border-bottom:1px solid var(--card-line);}
+.field:nth-last-child(-n+2){border-bottom:none;}
+.field .l{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:0.2px;}
+.field .v{font-size:14.5px;margin-top:4px;font-weight:600;color:var(--ink);}
+
+/* ---------- Profile header ---------- */
+.profile-head{display:flex;align-items:center;gap:20px;padding:22px;}
+.avatar-lg{
+  width:76px;height:76px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(145deg, var(--sky), var(--sky-deep));color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Georgia, serif;font-size:26px;font-weight:700;
+  box-shadow:0 10px 20px -6px rgba(15,127,184,0.55), inset 0 1px 1px rgba(255,255,255,0.4);
+}
+.profile-head h3{margin:0 0 4px;font-size:20px;}
+.profile-head .sub{font-size:13px;color:var(--muted);}
+.profile-head .badge-row{margin-top:8px;display:flex;gap:8px;}
+
+/* ---------- Progress bar (degree audit) ---------- */
+.progress-row{margin-bottom:20px;}
+.progress-row .top{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;}
+.progress-row .top .pct{color:var(--sky-deep);}
+.progress-bar{height:10px;border-radius:6px;background:var(--card-line);overflow:hidden;}
+.progress-bar > span{display:block;height:100%;background:linear-gradient(90deg, var(--sky), var(--sky-deep));border-radius:6px;}
+
+/* ---------- Timetable grid ---------- */
+.tt-grid{width:100%;border-collapse:collapse;font-size:13px;}
+.tt-grid th{text-align:center;font-weight:700;color:var(--navy-dark);font-size:12.5px;padding:10px 6px;border-bottom:2px solid var(--card-line);background:var(--card);}
+.tt-grid th:first-child{text-align:left;}
+.tt-grid td{padding:8px 6px;border:1px solid var(--card-line);vertical-align:middle;text-align:center;}
+.tt-grid td.tt-time-col{text-align:left;font-weight:700;color:var(--muted);white-space:nowrap;background:var(--card);}
+.tt-grid td.tt-slot{background:#EAF6FC;border-color:#BFE4F5;}
+.tt-grid td.tt-slot .course{display:block;font-weight:700;color:var(--navy-dark);font-size:12.5px;}
+.tt-grid td.tt-slot .room{display:block;color:var(--sky-deep);font-size:11.5px;margin-top:2px;}
+.tt-grid td.tt-empty{color:var(--card-line);}
+
+/* ---------- Search bar + dummy action buttons ---------- */
+.search-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.search-row input[type="text"]{
+  flex:1;min-width:200px;padding:10px 14px;
+  border:1px solid var(--card-line);border-radius:6px;
+  font-size:13.5px;font-family:inherit;color:var(--ink);background:var(--paper);
+}
+.search-row input[type="text"]:focus{outline:2px solid var(--sky);outline-offset:1px;}
+.btn{
+  appearance:none;border:none;cursor:pointer;font-family:inherit;
+  padding:10px 18px;border-radius:6px;font-size:13.5px;font-weight:700;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.btn-primary{background:var(--navy-dark);color:#fff;box-shadow:0 3px 0 var(--navy-mid);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--navy-mid);}
+.btn-add{background:#E3F3EA;color:var(--good);}
+.btn-add:hover{background:#CFEBDA;}
+.btn-drop{background:#FBE4E2;color:#B3261E;}
+.btn-drop:hover{background:#F6CFCB;}
+.info-row{display:flex;gap:24px;flex-wrap:wrap;align-items:center;margin-bottom:20px;padding:14px 18px;background:var(--card);border:1px solid var(--card-line);border-radius:8px;}
+.cross-note{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:#EAF6FC;border:1px solid #BFE4F5;border-radius:8px;
+  padding:12px 16px;margin-bottom:22px;font-size:13px;color:var(--navy-dark);
+}
+.cross-note svg{width:17px;height:17px;flex-shrink:0;color:var(--sky-deep);}
+.cross-note a{color:var(--sky-deep);font-weight:700;text-decoration:none;}
+.cross-note a:hover{text-decoration:underline;}
+.info-row .item{font-size:13px;}
+.info-row .item .l{color:var(--muted);margin-right:6px;}
+.info-row .item .v{font-weight:700;color:var(--navy-dark);}
+
+/* ---------- Clickable KPI (links to a drill-down page) ---------- */
+a.kpi{display:block;text-decoration:none;color:inherit;cursor:pointer;}
+a.kpi .go{
+  position:absolute;top:16px;right:16px;font-size:11px;font-weight:700;color:var(--sky-deep);
+  opacity:0;transform:translateX(-4px);transition:opacity .2s ease, transform .2s ease;
+}
+a.kpi:hover .go{opacity:1;transform:translateX(0);}
+
+/* ---------- Payment method cards ---------- */
+.method-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:14px;margin-bottom:24px;}
+.method-card{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;
+  border:2px solid var(--card-line);border-radius:10px;padding:20px 14px;
+  cursor:pointer;text-align:center;background:var(--paper);
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.method-card:hover{transform:translateY(-4px);box-shadow:0 12px 22px -10px rgba(16,24,40,0.18);}
+.method-card:has(input:checked){border-color:var(--sky);background:#EAF6FC;}
+.method-card input{position:absolute;top:10px;left:10px;accent-color:var(--sky-deep);width:16px;height:16px;}
+.method-card svg{width:30px;height:30px;color:var(--sky-deep);margin-top:6px;}
+.method-card span{font-size:13px;font-weight:700;color:var(--ink);}
+
+/* ---------- Amount due hero card ---------- */
+.amount-card{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;
+  background:linear-gradient(120deg, var(--navy-dark), var(--navy-mid));
+  border-radius:12px;padding:26px 28px;margin-bottom:26px;color:#fff;
+}
+.amount-card .l{font-size:12.5px;color:#9FC3E8;font-weight:600;letter-spacing:0.3px;}
+.amount-card .v{font-family:Georgia, serif;font-size:38px;font-weight:800;margin-top:4px;}
+.amount-card .due{font-size:12.5px;color:#C9D6E8;margin-top:6px;}
+
+/* ---------- Payment form fields ---------- */
+.pay-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+@media (max-width:600px){ .pay-field-grid{grid-template-columns:1fr;} }
+.pay-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+.pay-field input{width:100%;padding:11px 14px;border:1px solid var(--card-line);border-radius:6px;font-size:13.5px;font-family:inherit;color:var(--ink);background:var(--paper);}
+.pay-field input:focus{outline:2px solid var(--sky);outline-offset:1px;}
+.pay-cta{width:100%;padding:15px;font-size:15px;border-radius:8px;margin-top:6px;}
+.pay-field textarea{width:100%;padding:11px 14px;border:1px solid var(--card-line);border-radius:6px;font-size:13.5px;font-family:inherit;color:var(--ink);background:var(--paper);resize:vertical;min-height:110px;}
+.pay-field textarea:focus{outline:2px solid var(--sky);outline-offset:1px;}
+
+/* ---------- Submission file preview ---------- */
+.file-preview{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--card);border:1px solid var(--card-line);border-radius:10px;padding:18px 20px;margin-bottom:22px;
+}
+.file-icon{width:52px;height:64px;flex-shrink:0;background:#fff;border:1px solid var(--card-line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#C0392B;box-shadow:0 3px 8px rgba(16,24,40,0.08);}
+.file-icon svg{width:26px;height:26px;}
+.file-meta{flex:1;min-width:160px;}
+.file-meta .name{font-weight:700;font-size:14px;}
+.file-meta .info{font-size:12px;color:var(--muted);margin-top:2px;}
+.grade-input-row{display:flex;align-items:baseline;gap:10px;margin-bottom:20px;}
+.grade-input-row input{width:90px;padding:11px 14px;border:1px solid var(--card-line);border-radius:6px;font-size:18px;font-family:Georgia,serif;font-weight:700;text-align:center;color:var(--navy-dark);}
+.grade-input-row input:focus{outline:2px solid var(--sky);outline-offset:1px;}
+.grade-input-row .max{font-size:15px;color:var(--muted);font-weight:600;}
+
+/* ---------- Quiz question review (Moodle-style) ---------- */
+.q-review{border:1px solid var(--card-line);border-radius:10px;padding:18px 20px;margin-bottom:16px;background:var(--paper);}
+.q-review.correct{border-left:4px solid var(--good);}
+.q-review.incorrect{border-left:4px solid #B3261E;}
+.q-review.manual{border-left:4px solid var(--gold-deep);}
+.q-review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.q-review-head .qnum{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;}
+.q-review-head .qtext{font-size:14.5px;font-weight:700;margin-top:4px;}
+.q-status{flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.q-status.correct{background:#E3F3EA;color:var(--good);}
+.q-status.incorrect{background:#FBE4E2;color:#B3261E;}
+.q-status.manual{background:#FFF3B0;color:#8A6D00;}
+.q-status svg{width:13px;height:13px;}
+.q-answer-row{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;margin-top:8px;}
+.q-answer-row .lbl{color:var(--muted);font-weight:600;margin-right:6px;}
+.q-answer-row .val{font-weight:700;}
+.q-answer-row .val.wrong{color:#B3261E;}
+.q-answer-row .val.right{color:var(--good);}
+
+/* ---------- Form select ---------- */
+.pay-field select{width:100%;padding:11px 14px;border:1px solid var(--card-line);border-radius:6px;font-size:13.5px;font-family:inherit;color:var(--ink);background:var(--paper);}
+.pay-field select:focus{outline:2px solid var(--sky);outline-offset:1px;}
+.field-note{font-size:11.5px;color:var(--muted);margin-top:6px;}
+.select-sm{padding:9px 14px;border:1px solid var(--card-line);border-radius:6px;font-size:13.5px;font-family:inherit;color:var(--ink);background:var(--paper);cursor:pointer;}
+.select-sm:focus{outline:2px solid var(--sky);outline-offset:1px;}
+
+/* ---------- Competencies ---------- */
+.chip-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.no-filter-chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--card-line);border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:700;color:var(--ink);}
+.info-box{background:#E6F6FB;border:1px solid #BEE7F5;border-radius:8px;padding:16px 18px;font-size:13.5px;color:var(--ink);}
+
+/* ---------- Slip header actions (print / download) ---------- */
+.slip-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:18px 22px 14px;border-bottom:1px solid var(--card-line);}
+.slip-head h2{padding:0;border-bottom:none;margin:0;}
+.slip-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-outline{background:transparent;color:var(--navy-dark);border:1.5px solid var(--navy-dark);box-shadow:none;}
+.btn-outline:hover{background:var(--navy-dark);color:#fff;transform:translateY(-2px);}
+.btn-primary.btn-download:hover{transform:translateY(-2px);}
+.btn .btn-icon{width:15px;height:15px;vertical-align:-3px;margin-right:6px;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;pointer-events:none;}
+.input-sm{width:140px;padding:7px 10px;border:1px solid var(--card-line);border-radius:5px;font-size:12.5px;font-family:inherit;color:var(--ink);background:var(--paper);}
+.input-sm:focus{outline:2px solid var(--sky);outline-offset:1px;}
+
+/* ---------- Stub content ---------- */
+.stub{border:1px dashed var(--card-line);border-radius:10px;padding:64px 40px;text-align:center;color:var(--muted);background:var(--card);}
+.stub .mark{width:40px;height:40px;margin:0 auto 18px;color:var(--sky-deep);}
+.stub h3{color:var(--navy-dark);font-weight:800;font-size:19px;margin:0 0 8px;}
+.stub p{font-size:13.5px;max-width:360px;margin:0 auto;}
+
+footer{padding:22px 40px;background:var(--navy-dark);color:#9FC3E8;font-size:12px;text-align:center;}
+
+/* ---------- Language toggle ---------- */
+.lang-toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;margin-right:8px;}
+.lang-toggle a{color:var(--muted);text-decoration:none;padding:4px 6px;border-radius:4px;transition:background .18s ease, color .18s ease;}
+.lang-toggle a.current{color:var(--navy-dark);background:var(--card);}
+.lang-toggle a:hover{background:var(--card);color:var(--navy-dark);}
+.lang-toggle .sep{color:var(--card-line);}
+
+/* ---------- Accessibility widget ---------- */
+.a11y-widget{position:fixed;bottom:22px;left:22px;z-index:60;}
+.a11y-trigger{
+  list-style:none;cursor:pointer;width:48px;height:48px;border-radius:50%;
+  background:var(--navy-dark);color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.28);transition:transform .2s ease, background .2s ease;
+}
+.a11y-trigger::-webkit-details-marker{display:none;}
+.a11y-trigger:hover{transform:translateY(-3px) scale(1.06);background:var(--navy);}
+.a11y-trigger svg{width:23px;height:23px;}
+.a11y-panel{
+  position:absolute;bottom:60px;left:0;width:230px;
+  background:var(--paper);border:1px solid var(--card-line);border-radius:12px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.22);padding:16px;
+}
+.a11y-panel-head{font-weight:700;font-size:13.5px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--card-line);color:var(--ink);}
+.a11y-section{margin-bottom:14px;}
+.a11y-section:last-child{margin-bottom:0;}
+.a11y-section-title{font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:700;display:block;margin-bottom:8px;}
+.a11y-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;font-size:13px;cursor:pointer;color:var(--ink);}
+.a11y-switch-input{position:absolute;opacity:0;width:0;height:0;}
+.a11y-switch{position:relative;width:36px;height:20px;border-radius:12px;background:var(--card-line);flex-shrink:0;transition:background .2s ease;}
+.a11y-switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s ease;box-shadow:0 1px 3px rgba(0,0,0,0.3);}
+.a11y-switch-input:checked ~ .a11y-switch{background:var(--sky);}
+.a11y-switch-input:checked ~ .a11y-switch::after{transform:translateX(16px);}
+.a11y-font-row{display:flex;gap:6px;}
+.a11y-font-btn{position:relative;flex:1;text-align:center;padding:7px 0;border:1px solid var(--card-line);border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--ink);transition:background .2s ease, color .2s ease, border-color .2s ease;}
+.a11y-font-btn input{position:absolute;opacity:0;width:0;height:0;}
+.a11y-font-btn:has(input:checked){background:var(--sky);color:#fff;border-color:var(--sky);}
+
+/* ---------- Dark mode / grayscale / font-size (pure CSS, no JS) ---------- */
+body:has(#a11y-dark:checked){
+  --paper:#14161A; --card:#1E2127; --card-line:#2E323C; --ink:#F0F1F3; --muted:#A3A9B4;
+}
+body:has(#a11y-dark:checked) header.topbar{border-bottom-color:#2E323C;}
+body:has(#a11y-dark:checked) .lms-topbar{border-bottom-color:#2E323C;}
+body:has(#a11y-dark:checked) .avatar-lg{box-shadow:0 10px 20px -6px rgba(0,174,240,0.35), inset 0 1px 1px rgba(255,255,255,0.15);}
+body:has(#a11y-gray:checked){filter:grayscale(1);}
+body:has(#a11y-font-sm:checked){zoom:0.9;}
+body:has(#a11y-font-lg:checked){zoom:1.15;}
+body:has(#a11y-font-xl:checked){zoom:1.3;}
+
+/* ---------- Faculty: course sub-nav (Overview/Students/Materials/...) ---------- */
+.course-subnav{background:var(--navy-dark);padding:0 32px;display:flex;align-items:center;height:52px;overflow-x:auto;position:sticky;top:0;z-index:19;}
+.course-subnav a{
+  color:rgba(255,255,255,0.75);text-decoration:none;font-size:13.5px;font-weight:600;
+  padding:0 16px;height:52px;display:flex;align-items:center;white-space:nowrap;
+  border-bottom:3px solid transparent;
+  transition:color .18s ease, border-color .18s ease;
+}
+.course-subnav a:hover{color:#fff;}
+.course-subnav a.active{color:#fff;border-bottom-color:var(--sky);}
+
+/* ---------- Course layout: sidebar + content (Learning-Hub style, for content pages) ---------- */
+.course-layout{display:grid;grid-template-columns:270px 1fr;align-items:start;}
+@media (max-width:860px){ .course-layout{grid-template-columns:1fr;} }
+aside.course-sidebar{
+  background:var(--paper);border-right:1px solid var(--card-line);
+  padding:14px 0;position:sticky;top:52px;max-height:calc(100vh - 52px);overflow-y:auto;
+}
+details.chapter-group summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 20px;font-size:12px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;
+  color:#fff;background:var(--navy-dark);
+  transition:background .2s ease;
+}
+details.chapter-group summary::-webkit-details-marker{display:none;}
+details.chapter-group summary:hover{background:var(--navy);}
+details.chapter-group .chev{transition:transform .25s ease;width:14px;height:14px;flex-shrink:0;}
+details.chapter-group[open] .chev{transform:rotate(180deg);}
+details.chapter-group ul{list-style:none;margin:0;padding:0;}
+details.chapter-group li a{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 20px 11px 26px;font-size:13px;color:var(--ink);font-weight:500;
+  text-decoration:none;border-left:3px solid transparent;border-bottom:1px solid var(--card-line);
+  transition:background .18s ease, border-color .18s ease, transform .18s ease, padding-left .18s ease;
+}
+details.chapter-group li:last-child a{border-bottom:none;}
+details.chapter-group li a:hover{background:var(--card);border-left-color:var(--sky);padding-left:30px;}
+details.chapter-group li a:hover .side-label{color:var(--sky-deep);}
+.side-label{flex:1;line-height:1.35;transition:color .18s ease;}
+.side-tag{flex-shrink:0;font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--muted);background:var(--card);border:1px solid var(--card-line);border-radius:4px;padding:2px 6px;}
+
+.course-content{padding:32px;min-width:0;}
+.course-content h1{font-size:25px;font-weight:700;margin:0 0 26px;line-height:1.3;}
+
+details.chapter-panel{
+  background:var(--paper);border:1px solid var(--card-line);border-radius:10px;
+  margin-bottom:20px;overflow:hidden;scroll-margin-top:60px;
+  box-shadow:0 2px 8px rgba(16,24,40,0.06);
+  transition:box-shadow .3s ease;
+}
+details.chapter-panel[open]{box-shadow:0 14px 26px -10px rgba(16,24,40,0.16);}
+details.chapter-panel summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;font-family:Georgia, serif;font-size:18px;font-weight:700;
+}
+details.chapter-panel[open] summary{border-bottom:1px solid var(--card-line);}
+details.chapter-panel summary::-webkit-details-marker{display:none;}
+details.chapter-panel summary .chev{width:17px;height:17px;color:var(--muted);transition:transform .25s ease;flex-shrink:0;}
+details.chapter-panel[open] summary .chev{transform:rotate(180deg);}
+.resource-list{list-style:none;margin:0;padding:10px 10px 14px;}
+.resource-list li{display:flex;align-items:center;gap:6px;}
+.resource-list li a{
+  flex:1;display:flex;align-items:center;gap:12px;
+  padding:12px 12px;border-radius:8px;text-decoration:none;color:var(--ink);
+  font-size:14px;font-weight:600;
+  transition:background .18s ease, transform .18s ease;
+}
+.resource-list li a:hover{background:var(--card);transform:translateX(4px);}
+.res-icon{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.res-icon svg{width:15px;height:15px;}
+.res-icon.announce{background:#E9E6FB;color:#5B4FC7;}
+.res-icon.pptx{background:#FDEAE6;color:#D2531F;}
+.res-icon.pdf{background:#FBE4E2;color:#C0392B;}
+.res-icon.assign{background:#E2E9F5;color:#232F5C;}
+.res-icon.quiz{background:#FFF3B0;color:#8A6D00;}
+.res-tag{margin-left:auto;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.4px;}
+
+/* ---------- Lecturer edit affordances ---------- */
+.edit-icon-btn{
+  width:30px;height:30px;border-radius:6px;border:1px solid var(--card-line);background:var(--paper);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);flex-shrink:0;
+  transition:background .18s ease, color .18s ease, border-color .18s ease;
+}
+.edit-icon-btn:hover{background:var(--card);color:var(--navy-dark);}
+.edit-icon-btn.danger:hover{color:#B3261E;border-color:#F3C6C2;background:#FDECEA;}
+.edit-icon-btn svg{width:15px;height:15px;}
+.publish-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;}
+.publish-pill.on{background:#E3F3EA;color:var(--good);}
+.publish-pill.off{background:var(--card);color:var(--muted);}
+.chapter-actions{display:flex;align-items:center;gap:8px;padding:0 12px 14px;}
+
+/* ---------- Faculty: My Courses table ---------- */
+table.course-list td.code{font-weight:700;color:var(--navy-dark);}
+table.course-list td.name a{color:var(--sky-deep);text-decoration:none;font-weight:700;}
+table.course-list td.name a:hover{text-decoration:underline;}
+table.course-list td.name .sub{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+
+/* ---------- Faculty: student roster ---------- */
+.roster-name{display:flex;align-items:center;gap:10px;}
+.roster-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(145deg,var(--sky),var(--sky-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:12px;font-weight:700;flex-shrink:0;}
+.roster-name a{color:var(--sky-deep);text-decoration:none;font-weight:700;}
+.roster-name a:hover{text-decoration:underline;}
+.mini-bar{width:70px;height:7px;border-radius:4px;background:var(--card-line);overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px;}
+.mini-bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--sky),var(--sky-deep));}
+
+/* ---------- Faculty: QR attendance box ---------- */
+.qr-box{
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  background:var(--card);border:1px solid var(--card-line);border-radius:10px;padding:22px;margin-bottom:22px;
+}
+.qr-visual{
+  width:120px;height:120px;flex-shrink:0;border-radius:8px;border:1px solid var(--card-line);
+  background:
+    repeating-linear-gradient(0deg, var(--navy-dark) 0 6px, transparent 6px 12px),
+    repeating-linear-gradient(90deg, var(--navy-dark) 0 6px, transparent 6px 12px);
+  background-blend-mode:multiply;background-color:#fff;
+  position:relative;
+}
+.qr-visual::before, .qr-visual::after{
+  content:"";position:absolute;width:26px;height:26px;border:5px solid var(--navy-dark);
+}
+.qr-visual::before{top:8px;left:8px;}
+.qr-visual::after{bottom:8px;right:8px;}
+.qr-meta{flex:1;min-width:180px;}
+.qr-meta .label{font-size:11.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+.qr-meta .value{font-family:Georgia,serif;font-size:20px;font-weight:800;color:var(--navy-dark);margin-top:4px;}
+.qr-meta .expiry{font-size:12.5px;color:#B3261E;font-weight:700;margin-top:6px;}
+.qr-live{display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+.qr-live .count{font-family:Georgia,serif;font-size:30px;font-weight:800;color:var(--good);}
+
+/* ---------- Faculty: grade distribution bars ---------- */
+.dist-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.dist-label{width:40px;flex-shrink:0;font-size:12.5px;font-weight:700;color:var(--muted);text-align:right;}
+.dist-bar-track{flex:1;height:16px;border-radius:8px;background:var(--card-line);overflow:hidden;}
+.dist-bar-track > span{display:block;height:100%;background:linear-gradient(90deg,var(--sky),var(--sky-deep));border-radius:8px;}
+.dist-count{width:34px;flex-shrink:0;font-size:12.5px;font-weight:700;color:var(--ink);}
+
+/* ---------- Faculty: group cards ---------- */
+.group-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.group-card{background:var(--paper);border:1px solid var(--card-line);border-radius:10px;padding:16px 18px;transition:transform .25s ease, box-shadow .25s ease;}
+.group-card:hover{transform:translateY(-5px);box-shadow:0 16px 24px -12px rgba(16,24,40,0.2);}
+.group-card h3{font-size:15px;margin:0 0 10px;}
+.group-card ul{list-style:none;margin:0 0 12px;padding:0;font-size:12.5px;color:var(--muted);}
+.group-card li{padding:3px 0;}
+
+/* ---------- Faculty: HR editable/locked field markers ---------- */
+.field .locked{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--card-line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="admin-dashboard.html">
+    <img class="crest" src="logo-crest.png" alt="Kuwait University crest">
+    <div class="brand-text">
+      <span class="name">Kuwait University</span>
+      <span class="tag">Employee Portal</span>
+    </div>
+  </a>
+  <div class="who">
+    <div class="lang-toggle">
+      <a class="current" href="#">EN</a>
+      <span class="sep">|</span>
+      <a href="index-ar.html">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</a>
+    </div>
+    <details class="notif-wrap">
+      <summary class="notif-trigger" aria-label="Notifications" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="notif-badge">5</span>
+      </summary>
+      <div class="notif-panel">
+        <div class="notif-panel-head">Notifications</div>
+        <ul class="notif-list">
+          <li><a href="admin-transfers.html"><span class="notif-dot"></span><div class="notif-text"><div class="t">3 new withdrawal requests</div><div class="m">Registrar &middot; 1 hour ago</div></div></a></li>
+          <li><a href="admin-documents.html"><span class="notif-dot"></span><div class="notif-text"><div class="t">7 transcript requests pending</div><div class="m">Registrar &middot; 3 hours ago</div></div></a></li>
+          <li><a href="admin-dept-operations.html"><span class="notif-dot"></span><div class="notif-text"><div class="t">4 course registrations need approval</div><div class="m">Computer Science Dept. &middot; Today</div></div></a></li>
+          <li><a href="admin-users.html"><span class="notif-dot read"></span><div class="notif-text"><div class="t">New lecturer account created successfully</div><div class="m">System &middot; Yesterday</div></div></a></li>
+          <li><a href="admin-terms.html"><span class="notif-dot read"></span><div class="notif-text"><div class="t">Semester 6 term settings published</div><div class="m">System &middot; 2 days ago</div></div></a></li>
+        </ul>
+      </div>
+    </details>
+    <div class="meta">
+      <div class="n">Hessa Al-Qattan</div>
+      <div class="r">Admissions &amp; Registration Officer</div>
+    </div>
+    <a class="avatar-link" href="admin-profile.html" aria-label="View profile">
+      <div class="avatar">HQ</div>
+    </a>
+    <a class="logout-link" href="logout.html" aria-label="Log out" title="Log out">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M15 4H8a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7" stroke="currentColor" stroke-width="1.7"/><path d="M10 12h10m0 0-3-3m3 3-3 3" stroke="currentColor" stroke-width="1.7"/></svg>
+    </a>
+  </div>
+</header>
+<section class="hero">
+  <div class="inner">
+    <div>
+      <p class="eyebrow">Employee Portal</p>
+      <h1>Student records</h1>
+    </div>
+  </div>
+</section>
+<nav class="crumb" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="admin-dashboard.html">Employee Portal</a></li>
+    <li>Student Records</li>
+  </ol>
+</nav>
+<main>
+  <div class="layout">
+    <aside class="sidebar">
+  <ul>
+      <li><a href="admin-dashboard.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.6"/></svg><span>Dashboard</span></a></li>
+  </ul>
+  <h2>Admissions</h2>
+  <ul>
+      <li><a href="admin-admissions.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M6 4h9l4 4v12H6Z" stroke="currentColor" stroke-width="1.6"/><path d="m9 13 2 2 4-4" stroke="currentColor" stroke-width="1.6"/></svg><span>Applications</span></a></li>
+  </ul>
+  <h2>Student Administration</h2>
+  <ul>
+      <li><a class="active" href="admin-students.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6" stroke="currentColor" stroke-width="1.6"/></svg><span>Student Records</span></a></li>
+      <li><a href="admin-enrollment.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 3 20 7 12 11 4 7Z" stroke="currentColor" stroke-width="1.5"/><path d="M7 9.5V15c0 2 2.5 3.5 5 3.5s5-1.5 5-3.5V9.5" stroke="currentColor" stroke-width="1.5"/></svg><span>Enrollment Management</span></a></li>
+      <li><a href="admin-transfers.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M7 8h10M7 8l3-3M7 8l3 3" stroke="currentColor" stroke-width="1.6"/><path d="M17 16H7M17 16l-3-3M17 16l-3 3" stroke="currentColor" stroke-width="1.6"/></svg><span>Transfers &amp; Graduation</span></a></li>
+      <li><a href="admin-documents.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M6 4h9l4 4v12H6Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 12h6M9 15.5h6" stroke="currentColor" stroke-width="1.6"/></svg><span>Document Requests</span></a></li>
+      <li><a href="admin-international.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15.5 0 18M12 3c-2.5 2.5-2.5 15.5 0 18" stroke="currentColor" stroke-width="1.4"/></svg><span>International &amp; Visa Services</span></a></li>
+  </ul>
+  <h2>Financial Administration</h2>
+  <ul>
+      <li><a href="admin-financial.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v10M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.8 2.5 2-1.1 1.7-2.5 1.7-2.5.7-2.5 2 1.1 2 2.5 2 2.5-.8 2.5-2" stroke="currentColor" stroke-width="1.3"/></svg><span>Tuition, Aid &amp; Holds</span></a></li>
+  </ul>
+  <h2>System Management</h2>
+  <ul>
+      <li><a href="admin-courses.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="1" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6"/></svg><span>Manage Courses</span></a></li>
+      <li><a href="admin-users.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M3 19c.6-3 2.3-4.5 5-4.5s4.4 1.5 5 4.5M13 19c.5-2.6 2-4 4.5-4s4 1.4 4.5 4" stroke="currentColor" stroke-width="1.5"/></svg><span>Manage Users</span></a></li>
+      <li><a href="admin-permissions.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.6"/></svg><span>Permissions</span></a></li>
+      <li><a href="admin-terms.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="1" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3v3.5M16 3v3.5" stroke="currentColor" stroke-width="1.6"/></svg><span>Terms &amp; System Activity</span></a></li>
+      <li><a href="admin-communications.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H8l-4 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Mass Communication</span></a></li>
+  </ul>
+  <h2>Curriculum &amp; Facilities</h2>
+  <ul>
+      <li><a href="admin-curriculum.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 19.5V6a2 2 0 0 1 2-2h13v15.5H6a2 2 0 0 0-2 2Z" stroke="currentColor" stroke-width="1.5"/><path d="M8 8h7M8 11.5h7" stroke="currentColor" stroke-width="1.4"/></svg><span>Curriculum &amp; Degree Audit</span></a></li>
+      <li><a href="admin-facilities.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 20V10l8-6 8 6v10Z" stroke="currentColor" stroke-width="1.6"/><path d="M10 20v-6h4v6" stroke="currentColor" stroke-width="1.6"/></svg><span>Facilities &amp; Scheduling</span></a></li>
+  </ul>
+  <h2>Academic Operations</h2>
+  <ul>
+      <li><a href="admin-dept-operations.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M3 19c.6-3 2.3-4.5 5-4.5s4.4 1.5 5 4.5M13 19c.5-2.6 2-4 4.5-4s4 1.4 4.5 4" stroke="currentColor" stroke-width="1.5"/></svg><span>Department Operations</span></a></li>
+  </ul>
+  <h2>Reporting &amp; Compliance</h2>
+  <ul>
+      <li><a href="admin-reports.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M5 20V10M12 20V4M19 20v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Reports &amp; Analytics</span></a></li>
+      <li><a href="admin-access-log.html"><svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.6"/></svg><span>Access Log</span></a></li>
+  </ul>
+</aside>
+    <div class="content">
+      <div class="search-row">
+        <input type="text" placeholder="Search by name or student ID&hellip;" aria-label="Search students">
+        <button class="btn btn-primary">Search</button>
+        <a class="btn btn-add" href="admin-student-edit.html?new=1"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Create Student Record</a>
+      </div>
+      <article class="panel">
+        <h2>Student records &mdash; 6,482 total</h2>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>Student</th><th>Student ID</th><th>Programme</th><th>Level</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            <tr>
+              <td><a href="admin-student-edit.html">Nadia binti Rahman</a></td>
+              <td>A21EC0142</td><td>B.Sc. Computer Science</td><td>Year 3</td>
+              <td><span class="pill ok">Active</span></td>
+              <td><a class="edit-icon-btn" href="admin-student-edit.html" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a></td>
+            </tr>
+            <tr>
+              <td><a href="admin-student-edit.html">Fahad Al-Ajmi</a></td>
+              <td>A21EC0198</td><td>B.Sc. Computer Science</td><td>Year 3</td>
+              <td><span class="pill ok">Active</span></td>
+              <td><a class="edit-icon-btn" href="admin-student-edit.html" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a></td>
+            </tr>
+            <tr>
+              <td><a href="admin-student-edit.html">Mariam Al-Kandari</a></td>
+              <td>A21EC0142B</td><td>B.Sc. Computer Science</td><td>Year 3</td>
+              <td><span class="pill progress">Graduation pending</span></td>
+              <td><a class="edit-icon-btn" href="admin-student-edit.html" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a></td>
+            </tr>
+            <tr>
+              <td><a href="admin-student-edit.html">Yousef Al-Mutairi</a></td>
+              <td>A21EC0176</td><td>B.Sc. Computer Science</td><td>Year 3</td>
+              <td><span class="pill due">Withdrawal requested</span></td>
+              <td><a class="edit-icon-btn" href="admin-student-edit.html" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a></td>
+            </tr>
+            <tr>
+              <td><a href="admin-student-edit.html">Dana Al-Enezi</a></td>
+              <td>A21EC0154</td><td>B.Sc. Computer Science</td><td>Year 3</td>
+              <td><span class="pill ok">Active</span></td>
+              <td><a class="edit-icon-btn" href="admin-student-edit.html" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10-4-4L4 16Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a></td>
+            </tr>
+            </tbody>
+          </table>
+          <p style="font-size:12px;color:var(--muted);margin:14px 0 0;">Showing 5 of 6,482 student records in this demo.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+<footer>
+  <p>Kuwait University Employee Portal &mdash; demo layout</p>
+</footer>
+<details class="a11y-widget">
+  <summary class="a11y-trigger" aria-label="Accessibility tools" title="Accessibility tools">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8" r="1.5" fill="currentColor"/><path d="M7 10.5h10M12 10.5v4.5M9 19l3-4 3 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </summary>
+  <div class="a11y-panel">
+    <div class="a11y-panel-head">Accessibility Tools</div>
+    <div class="a11y-section">
+      <span class="a11y-section-title">Display</span>
+      <label class="a11y-row">
+        <span>Dark Mode</span>
+        <input type="checkbox" id="a11y-dark" class="a11y-switch-input"><span class="a11y-switch"></span>
+      </label>
+      <label class="a11y-row">
+        <span>Grayscale</span>
+        <input type="checkbox" id="a11y-gray" class="a11y-switch-input"><span class="a11y-switch"></span>
+      </label>
+    </div>
+    <div class="a11y-section">
+      <span class="a11y-section-title">Font Size</span>
+      <div class="a11y-font-row">
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-sm">S</label>
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-md" checked>M</label>
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-lg">L</label>
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-xl">XL</label>
+      </div>
+    </div>
+  </div>
+</details>
+</body>
+</html>
