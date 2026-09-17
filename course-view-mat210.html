@@ -308,6 +308,54 @@ footer.lms-footer{background:var(--navy-dark);color:#C7C7C7;margin-top:20px;}
 }
 .app-badge:hover{background:rgba(255,255,255,0.16);transform:translateY(-2px);}
 
+/* ---------- Language toggle ---------- */
+.lang-toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;margin-right:4px;}
+.lang-toggle a{color:var(--muted);text-decoration:none;padding:4px 6px;border-radius:4px;transition:background .18s ease, color .18s ease;}
+.lang-toggle a.current{color:var(--ink);background:var(--card);}
+.lang-toggle a:hover{background:var(--card);color:var(--ink);}
+.lang-toggle .sep{color:var(--card-line);}
+
+/* ---------- Accessibility widget ---------- */
+.a11y-widget{position:fixed;bottom:22px;left:22px;z-index:60;}
+.a11y-trigger{
+  list-style:none;cursor:pointer;width:48px;height:48px;border-radius:50%;
+  background:var(--navy-dark);color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.28);transition:transform .2s ease, background .2s ease;
+}
+.a11y-trigger::-webkit-details-marker{display:none;}
+.a11y-trigger:hover{transform:translateY(-3px) scale(1.06);background:var(--navy);}
+.a11y-trigger svg{width:23px;height:23px;}
+.a11y-panel{
+  position:absolute;bottom:60px;left:0;width:230px;
+  background:var(--paper);border:1px solid var(--card-line);border-radius:12px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.22);padding:16px;
+}
+.a11y-panel-head{font-weight:700;font-size:13.5px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--card-line);color:var(--ink);}
+.a11y-section{margin-bottom:14px;}
+.a11y-section:last-child{margin-bottom:0;}
+.a11y-section-title{font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:700;display:block;margin-bottom:8px;}
+.a11y-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;font-size:13px;cursor:pointer;color:var(--ink);}
+.a11y-switch-input{position:absolute;opacity:0;width:0;height:0;}
+.a11y-switch{position:relative;width:36px;height:20px;border-radius:12px;background:var(--card-line);flex-shrink:0;transition:background .2s ease;}
+.a11y-switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s ease;box-shadow:0 1px 3px rgba(0,0,0,0.3);}
+.a11y-switch-input:checked ~ .a11y-switch{background:var(--sky);}
+.a11y-switch-input:checked ~ .a11y-switch::after{transform:translateX(16px);}
+.a11y-font-row{display:flex;gap:6px;}
+.a11y-font-btn{position:relative;flex:1;text-align:center;padding:7px 0;border:1px solid var(--card-line);border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--ink);transition:background .2s ease, color .2s ease, border-color .2s ease;}
+.a11y-font-btn input{position:absolute;opacity:0;width:0;height:0;}
+.a11y-font-btn:has(input:checked){background:var(--sky);color:#fff;border-color:var(--sky);}
+
+/* ---------- Dark mode / grayscale / font-size (pure CSS, no JS) ---------- */
+body:has(#a11y-dark:checked){
+  --paper:#14161A; --card:#1E2127; --card-line:#2E323C; --ink:#F0F1F3; --muted:#A3A9B4;
+}
+body:has(#a11y-dark:checked) .lms-topbar{border-bottom-color:#2E323C;}
+body:has(#a11y-dark:checked) .course-subnav{border-bottom-color:#2E323C;}
+body:has(#a11y-gray:checked){filter:grayscale(1);}
+body:has(#a11y-font-sm:checked){zoom:0.9;}
+body:has(#a11y-font-lg:checked){zoom:1.15;}
+body:has(#a11y-font-xl:checked){zoom:1.3;}
+
 /* ---------- Course sub-app: subnav ---------- */
 .course-subnav{background:var(--navy-dark);padding:0 32px;display:flex;align-items:center;height:52px;position:sticky;top:64px;z-index:19;}
 .course-subnav a{
@@ -477,6 +525,11 @@ table.grade-table td.status-cell{text-align:right;}
     </nav>
   </div>
   <div class="lms-right">
+    <div class="lang-toggle">
+      <a class="current" href="#">EN</a>
+      <span class="sep">|</span>
+      <a href="index-ar.html">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</a>
+    </div>
     <div class="theme-toggle" title="Toggle theme">
       <div class="knob"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/></svg></div>
     </div>
@@ -595,5 +648,33 @@ table.grade-table td.status-cell{text-align:right;}
     </div>
   </div>
 </footer>
+<details class="a11y-widget">
+  <summary class="a11y-trigger" aria-label="Accessibility tools" title="Accessibility tools">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8" r="1.5" fill="currentColor"/><path d="M7 10.5h10M12 10.5v4.5M9 19l3-4 3 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </summary>
+  <div class="a11y-panel">
+    <div class="a11y-panel-head">Accessibility Tools</div>
+    <div class="a11y-section">
+      <span class="a11y-section-title">Display</span>
+      <label class="a11y-row">
+        <span>Dark Mode</span>
+        <input type="checkbox" id="a11y-dark" class="a11y-switch-input"><span class="a11y-switch"></span>
+      </label>
+      <label class="a11y-row">
+        <span>Grayscale</span>
+        <input type="checkbox" id="a11y-gray" class="a11y-switch-input"><span class="a11y-switch"></span>
+      </label>
+    </div>
+    <div class="a11y-section">
+      <span class="a11y-section-title">Font Size</span>
+      <div class="a11y-font-row">
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-sm">S</label>
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-md" checked>M</label>
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-lg">L</label>
+        <label class="a11y-font-btn"><input type="radio" name="a11y-font" id="a11y-font-xl">XL</label>
+      </div>
+    </div>
+  </div>
+</details>
 </body>
 </html>
